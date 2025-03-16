@@ -71,25 +71,6 @@ actions:
     option: "remove-appx-photos"
     weight: 150
 
-  - !cmd:
-    exeDir: true
-    command: 'robocopy "Wallpapers" "%systemroot%\Web\Wallpaper\MeetRevision\v2" /E /PURGE /IM /IT /NP'
-    ignoreErrors: true
-
-  - !powerShell:
-    command: '.\WALLPAPER.ps1 -Mode Desktop -ImagePath $env:systemroot\Web\Wallpaper\MeetRevision\v2\desktop.jpg'
-    exeDir: true
-    runas: currentUserElevated
-    option: "configure-wallpaper"
-    weight: 45
-
-  - !powerShell: 
-    command: '.\WALLPAPER.ps1 -Mode LockScreen -ImagePath $env:systemroot\Web\Wallpaper\MeetRevision\v2\lockscreen.jpg'
-    exeDir: true
-    runas: currentUserElevated
-    option: "configure-wallpaper"
-    weight: 45  
-
   # Necessary to refresh start menu entries etc.
   - !appx: {operation: clearCache, name: '*Client.CBS*'}
   - !appx: {operation: clearCache, name: '*StartMenuExperienceHost*', option: "remove-pinned-items-startmenu"}

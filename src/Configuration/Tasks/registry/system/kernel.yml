@@ -6,7 +6,7 @@ actions:
 
     # === Enable TSX
     # ------> It was disabled by default due to security reasons; Enabling it makes 4~5 times faster in database transaction and around 40% faster in specific workloads
-  # https://github.com/meetrevision/playbook/issues/100
+
   # - !registryValue: {path: 'HKLM\SYSTEM\ControlSet001\Control\Session Manager\Kernel', value: 'DisableTsx', type: REG_DWORD, data: '0'}
   - !powerShell: 
     command: |

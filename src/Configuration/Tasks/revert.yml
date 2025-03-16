@@ -17,16 +17,13 @@ actions:
   - !registryValue: { path: 'HKCU\SOFTWARE\Policies\Microsoft\Internet Explorer\Privacy', value: 'ClearBrowsingHistoryOnExit', operation: delete }
   - !registryValue: { path: 'HKLM\SOFTWARE\Policies\Microsoft\Internet Explorer\Privacy', value: 'ClearBrowsingHistoryOnExit', operation: delete }
   
-  # https://github.com/meetrevision/playbook/issues/27
   - !run: {exe: 'netsh', args: 'int tcp set supplemental internet congestionprovider=default', showOutput: false, showError: false}
 
-  # https://github.com/meetrevision/playbook/pull/31
   - !registryValue: { path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion', value: 'RegisteredOrganisation', operation: delete }
 
   # Previously used as detection purpose
   - !registryValue: {path: 'HKLM\Software\Classes\CLSID', value: 'IsModernRCEnabled', operation: delete}
 
-  # Breaks XboxGipSvc - https://github.com/meetrevision/playbook/issues/34
   - !registryValue: {path: 'HKLM\SYSTEM\ControlSet001\Control', value: 'SvcHostSplitThresholdInKB', type: REG_DWORD, data: '3670016'}
 
   # Breaks Efficiency Mode in Task Manager
@@ -61,8 +58,8 @@ actions:
   - !registryValue: {path: 'HKLM\SYSTEM\ControlSet001\Control\Session Manager\Memory Management', value: 'FeatureSettingsOverrideMask', operation: delete}
 
   # Automatic Maintenance
-  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\Maintenance', value: 'MaintenanceDisabled', operation: delete, option: '!disable-automatic-maintenance'}
-  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\ScheduledDiagnostics', value: 'EnabledExecution', operation: delete, option: '!disable-automatic-maintenance'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\Maintenance', value: 'MaintenanceDisabled', operation: delete}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\ScheduledDiagnostics', value: 'EnabledExecution', operation: delete}
 
   # Breaks 'Your Phone'
   - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent', value: 'DisableWindowsConsumerFeatures', operation: delete}
