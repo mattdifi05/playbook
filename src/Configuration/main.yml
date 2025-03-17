@@ -3,15 +3,10 @@ title: Custom
 description: Custom LightOS configuration
 privilege: Admin
 actions:
-  
-  # OS Info
-  - !task: {path: 'Tasks\registry\os-info\edition.yml'}
 
   - !task: {path: 'Tasks\start.yml'}
-  
   - !task: {path: 'Tasks\packages\app-win32.yml'}
   # Uninstalling WinSxS packages before app-win32 could leave leftovers
-  - !task: {path: 'Tasks\packages\win-sxs.yml'}
   - !task: {path: 'Tasks\packages\appx.yml'}
 
   

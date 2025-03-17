@@ -17,33 +17,46 @@ foreach ($package in $Packages) {
 
         Write-Host "Removing package: $($fullPackageName)"
 
-        # Adding to Deprovisioned may prevent some UWP packages from installing after updating Windows
+        # Aggiunge la voce "Deprovisioned" per impedire l'installazione automatica durante gli aggiornamenti
         $deprovisionedPath = "$baseRegistryPath\Deprovisioned\$packageFamilyName"
         if (-not (Test-Path -Path $deprovisionedPath)) {
-            New-Item -Path $deprovisionedPath -Force
+            New-Item -Path $deprovisionedPath -Force | Out-Null
         }
 
+        # Rimuove la voce di "InboxApplications" se presente
         $inboxAppsPath = "$baseRegistryPath\InboxApplications\$fullPackageName"
         if (Test-Path $inboxAppsPath) {
             Remove-Item -Path $inboxAppsPath -Force
         }
         
+        # Se il pacchetto è contrassegnato come non rimovibile, imposta il flag per renderlo rimovibile
         if ($pkg.NonRemovable -eq 1) {
             Set-NonRemovableAppsPolicy -Online -PackageFamilyName $packageFamilyName -NonRemovable 0
         }
 
-        # Add to EndOfLife
+        # Aggiunge il pacchetto alla chiave "EndOfLife" per ogni utente che lo ha installato
         foreach ($userInfo in $pkg.PackageUserInformation) {
             $userSid = $userInfo.UserSecurityID.SID
             $endOfLifePath = "$baseRegistryPath\EndOfLife\$userSid\$fullPackageName"
-            New-Item -Path $endOfLifePath -Force
+            New-Item -Path $endOfLifePath -Force | Out-Null
 
-            # Errors may occur if the package is not added to the EndOfLife registry key for every user who has it installed 
+            # Rimuove il pacchetto per l'utente specifico
             Remove-AppxPackage -Package $fullPackageName -User $userSid
         }
 
-        # Second attempt
-        # An APPX package can be installed for multiple users, and when uninstallation is performed for each or all users, its status may appear as "Staged" or "Installed(pending removal)" for certain users. Therefore, a second attempt is needed to remove the package completely
+        # Secondo tentativo: rimuove il pacchetto per tutti gli utenti
         Remove-AppxPackage -Package $fullPackageName -AllUsers
+
+        # Se il pacchetto è il Microsoft Store, rimuove anche la cartella di sistema
+        if ($pkg.PackageFamilyName -like "Microsoft.WindowsStore*") {
+            $systemAppsPath = "C:\Windows\SystemApps\$($pkg.PackageFamilyName)"
+            if (Test-Path $systemAppsPath) {
+                Write-Host "Removing system folder for Microsoft Store: $systemAppsPath"
+                # Prende possesso della cartella e imposta le autorizzazioni per poterla rimuovere
+                takeown /F $systemAppsPath /R /D Y | Out-Null
+                icacls $systemAppsPath /grant Administrators:F /T | Out-Null
+                Remove-Item $systemAppsPath -Recurse -Force
+            }
+        }
     }
 }

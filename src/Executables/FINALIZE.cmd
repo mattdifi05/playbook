@@ -74,6 +74,7 @@ echo Configuring teredo
 netsh interface Teredo set state type=default >NUL 2>nul
 netsh interface Teredo set state servername=default >NUL 2>nul
 
+@echo off
 
 echo Configuring Windows settings
 net accounts /maxpwage:unlimited

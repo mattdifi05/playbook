@@ -25,7 +25,9 @@ actions:
   # ------> https://www.howtogeek.com/323390/how-to-fix-windows-and-linux-showing-different-times-when-dual-booting/
   - !registryKey: {path: 'HKCU\Software\Microsoft\Internet Explorer\LowRegistry\Audio\PolicyConfig\PropertyStore', operation: add}
   - !registryValue: {path: 'HKLM\System\CurrentControlSet\Control\TimeZoneInformation', value: 'RealTimeIsUniversal', type: REG_DWORD, data: '1'}
-
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'PromptOnSecureDesktop', type: REG_DWORD, data: '0'}
+  - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', value: 'EnableLUA', type: REG_DWORD, data: '0'}
+  
   # === Workaround and fix for Mapped Network Drives and UAC.
   # ------> https://docs.microsoft.com/en-us/troubleshoot/windows-client/networking/mapped-drives-not-available-from-elevated-command#workaround---method-2
   # ------> https://serverfault.com/q/182758
@@ -49,12 +51,6 @@ actions:
 
   # === Fix WU Taskbar
   # - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings', value: 'TrayIconVisibility', type: REG_DWORD, data: '0'}
-
-  # === Stop indexing src and Licenses folders
-  # - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreventIndexingCertainPaths', value: 'file:///C:\Users\Default\Documents\Workspace\Revision-Tool\bin\*', type: REG_SZ, data: 'file:///C:\Users\Default\Documents\Workspace\Revision-Tool\bin\*'}
-  # - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreventIndexingCertainPaths', value: 'file:///%userprofile%\Documents\Workspace\Revision-Tool\bin\*', type: REG_SZ, data: 'file:///%userprofile%\Documents\Workspace\Revision-Tool\bin\*'}
-  # - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreventIndexingCertainPaths', value: 'file:///C:\Windows\src\*', type: REG_SZ, data: 'file:///C:\Windows\src\*'}
-  # - !registryValue: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Windows\PreventIndexingCertainPaths', value: 'file:///C:\Licenses\*', type: REG_SZ, data: 'file:///C:\Licenses\*'}
 
   # === Prevent MS Edge Chromium being installed after updates (Legacy Edge still gets installed)
 

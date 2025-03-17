@@ -1,13 +1,9 @@
 ---
 title: Registry
-description: Revision registry configuration
+description: LightOS registry configuration
 privilege: TrustedInstaller
 actions: 
   - !writeStatus: {status: "Tweaking registry"}
-
-  # OS Info
-  - !writeStatus: {status: "Configuring OS Info"}
-  - !task: {path: 'Tasks\registry\os-info\edition.yml'}
 
   # Explorer
   - !writeStatus: {status: "Configuring Explorer"}

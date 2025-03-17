@@ -60,6 +60,7 @@ actions:
         'MicrosoftTeams',
         'MSTeams', # New Teams
         'Microsoft.StartExperiencesApp'
+        'Microsoft.ScreenSketch'
       )
 
   - !writeStatus: {status: "Removing Photos"}
@@ -146,6 +147,9 @@ actions:
 
   - !writeStatus: {status: "Removing Spotify"}
   - !appx: {name: '*Spotify*', type: family, weight: 10}
+  
+  - !writeStatus: {status: "Removing Outlook"}
+  - !appx: {name: '*Microsoft.OutlookForWindows*', type: family, weight: 10}
 
   - !writeStatus: {status: "Removing SecureAssessmentBrowser"}
   - !appx: {name: '*SecureAssessmentBrowser*', type: family, weight: 10}
@@ -295,13 +299,25 @@ actions:
   - !appx: {name: '*WindowsBackup*', type: app, unregister: true, option: "remove-appx-wbackup", weight: 10}
 
   - !writeStatus: {status: "Removing Microsoft Store"}
-  - !appx: {name: '*Microsoft.WindowsStore*', type: app, unregister: true, option: "remove-appx-mstore", weight: 10}
+  - !powerShell:
+      wait: true
+      exeDir: true
+      errorAction: Ignore
+      weight: 10
+      option: "remove-appx-mstore"
+      command: >-
+        .\APPX-REMOVER.ps1 -Packages 'Microsoft.WindowsStore'
 
   - !writeStatus: {status: "Removing Notepad"}
   - !appx: {name: '*Microsoft.WindowsNotepad*', type: app, unregister: true, option: "remove-appx-notepad", weight: 10}
-
-  - !writeStatus: {status: "Removing Windows Security"}
-  - !appx: {name: '*Microsoft.SecHealthUI*', type: app, unregister: true, option: "remove-appx-wsecurity", weight: 10}
+  - !powerShell:
+      wait: true
+      exeDir: true
+      errorAction: Ignore
+      weight: 10
+      option: "remove-appx-notepad"
+      command: >-
+        .\APPX-REMOVER.ps1 -Packages 'Microsoft.WindowsNotepad'
 
   - !writeStatus: {status: "Removing FlipGrid"}
   - !appx: {name: '*Flipgrid*', type: family, weight: 10}
@@ -311,7 +327,6 @@ actions:
   - !appx: {name: '*Microsoft.GamingApp*', type: family, option: "remove-appx-xbox"}
   - !appx: {name: '*Microsoft.XboxApp*', type: family} 
 
-  
   - !writeStatus: {status: "Removing Your Phone", option: "remove-appx-yourphone"}
   - !appx: {name: '*Microsoft.YourPhone*', type: family, weight: 10, option: "remove-appx-yourphone"}
   - !appx: {name: '*MicrosoftWindows.CrossDevice*', type: family, weight: 10, option: "remove-appx-yourphone"}

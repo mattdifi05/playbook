@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: Applies some Revision configurations
+description: Applies some LightOS configurations
 privilege: TrustedInstaller
 actions:
 
@@ -20,16 +20,6 @@ actions:
 
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Services\Pending\7971f918-a847-4430-9279-4a52d1efe18d', value: 'RegisterWithAU', type: REG_DWORD, data: '0'}
   
-  # [!] Breaks 'defrag c: -b'
-  # Disable Superfetch for SSDs
-  # Detection of mediaType might not work on VMs
-  # - !powerShell:
-  #   command: |
-  #     $mediaType = (Get-PhysicalDisk -SerialNumber (Get-Disk -Number (Get-Partition -DriveLetter $env:SystemDrive.Substring(0, 1)).DiskNumber).SerialNumber.TrimStart()).MediaType
-  #     if ($mediaType -eq 'SSD') {
-  #       $path = ${env:ProgramFiles(x86)} + '\Revision Tool\data\flutter_assets\additionals\DisableSF.bat'
-  #       Start-Process -FilePath $path -Wait -NoNewWindow
-  #     }
   
   - !cmd:
     command: 'setx DOTNET_CLI_TELEMETRY_OPTOUT 1'
@@ -67,6 +57,12 @@ actions:
 
   - !run:
     exeDir: true
+    exe: "WD.bat"
+    option: "disable-defender"
+    weight: 100
+
+  - !run:
+    exeDir: true
     exe: "FILEASSOC.cmd"
     option: "remove-appx-photos"
     weight: 150
@@ -80,14 +76,6 @@ actions:
   # Force update group policy
   - !run: 
     exe: "gpupdate.exe"
-
-  # Apply micro patches via Revision Tool in order to avoid new playbook releases for minor changes
-  - !run:
-    path: "%ProgramFiles(x86)%\\Revision Tool"
-    exe: "revitool.exe"
-    args: "playbook-patches apply"
-    wait: true
-    runas: currentUserElevated
     
   - !powerShell:
     command: |

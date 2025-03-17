@@ -68,12 +68,6 @@ actions:
   - !registryKey: {path: 'HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate', operation: delete}
 
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing', value: 'RepairContentServerSource', operation: delete}
-  
-  # Breaks 'defrag c: -b'
-  - !powerShell:
-    command: |
-      $path = ${env:ProgramFiles(x86)} + '\Revision Tool\data\flutter_assets\additionals\EnableSF.bat'
-      Start-Process -FilePath $path -Wait -NoNewWindow
 
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Dfrg\BootOptimizeFunction', value: 'Enable', operation: delete}
   - !registryValue: {path: 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\OptimalLayout', value: 'EnableAutoLayout', operation: delete}
@@ -104,7 +98,6 @@ actions:
   - !registryKey: {path: 'HKLM\SOFTWARE\Policies\Microsoft\Biometrics', operation: delete}
 
   # Fix KGL mismatch in Xbox Game Bar
-  # Disabling background apps breaks Xbox Game Bar KGL update. We remove bloat apps anyway and it can be toggled in Revision Tool
   - !registryValue: {path: 'HKLM\Software\Policies\Microsoft\Windows\AppPrivacy', value: 'LetAppsRunInBackground', operation: delete}
   - !registryValue: {path: 'HKCU\Software\Microsoft\Windows\CurrentVersion\Search', value: 'BackgroundAppGlobalToggle', operation: delete}
   - !registryValue: {path: 'HKLM\Software\Microsoft\Windows\CurrentVersion\Search', value: 'BackgroundAppGlobalToggle', operation: delete}
