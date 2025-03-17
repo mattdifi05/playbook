@@ -7,10 +7,10 @@ Write-Host "Product Name: $productName"
 $argumentsList = if ($productName -like '*LTSC*') {'msstore-apps --id 9NBLGGH4NNS1 --ring RP'} else {'msstore-apps --id 9WZDNCRFJBMP --id 9NBLGGH4NNS1 --ring RP'}
 Start-Process -FilePath $file -ArgumentList $argumentsList -Wait -NoNewWindow -PassThru -Verbose
 
-$programDataPath = [System.Environment]::GetFolderPath('CommonApplicationData')
-$appDataPath = [System.Environment]::GetFolderPath('ApplicationData')
-$programsPath = Join-Path $appDataPath "Microsoft\Windows\Start Menu\Programs"
-$systemToolsPath = Join-Path $programsPath "System Tools"
+$programsPaths = @(
+    "$env:APPDATA\Microsoft\Windows\Start Menu\Programs",
+    "$env:PROGRAMDATA\Microsoft\Windows\Start Menu\Programs"
+)
 
 $foldersToHide = @(
     "Accessibility",
@@ -18,8 +18,33 @@ $foldersToHide = @(
     "Windows PowerShell",
     "Accessories",
     "System Tools",
-    "Administrative Tools"
+    "Administrative Tools",
+    "Windows PowerShell",
+    "Administrative Tools",
+    "System Tools",
+    "Accessories",
+    "Accessibility"
 )
+
+foreach ($programsPath in $programsPaths) {
+    foreach ($folderName in $foldersToHide) {
+        $fullPath = Join-Path $programsPath $folderName
+        
+        if (Test-Path $fullPath) {
+            Write-Host "Hiding: $fullPath"
+            
+            $dirItem = Get-Item $fullPath
+            $dirItem.Attributes = $dirItem.Attributes -bor [System.IO.FileAttributes]::Hidden
+            
+            Get-ChildItem $fullPath -Recurse -Force | ForEach-Object {
+                $_.Attributes = $_.Attributes -bor [System.IO.FileAttributes]::Hidden
+            }
+        }
+        else {
+            Write-Host "Not found: $fullPath"
+        }
+    }
+}
 
 $fileExplorerShortcut = Join-Path $systemToolsPath "File Explorer.lnk"
 $newLocation = Join-Path $programsPath "File Explorer.lnk"
@@ -31,29 +56,3 @@ if (Test-Path $fileExplorerShortcut) {
     Write-Host "File Explorer shortcut not found in System Tools."
 }
 
-function Hide-ItemRecursively {
-    param (
-        [string]$Path
-    )
-
-    if (Test-Path $Path) {
-        Write-Host "Hiding: $Path"
-
-        $dirItem = Get-Item $Path -Force
-        $dirItem.Attributes = $dirItem.Attributes -bor [System.IO.FileAttributes]::Hidden
-
-        Get-ChildItem $Path -Recurse -Force | ForEach-Object {
-            $_.Attributes = $_.Attributes -bor [System.IO.FileAttributes]::Hidden
-        }
-
-        Start-Process -FilePath "cmd.exe" -ArgumentList "/c attrib +h +s `"$Path`" /s /d" -Wait -NoNewWindow
-    }
-    else {
-        Write-Host "Not found: $Path"
-    }
-}
-
-foreach ($folderName in $foldersToHide) {
-    $fullPath = Join-Path $programsPath $folderName
-    Hide-ItemRecursively -Path $fullPath
-}
