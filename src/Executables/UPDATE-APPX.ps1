@@ -7,6 +7,16 @@ Write-Host "Product Name: $productName"
 $argumentsList = if ($productName -like '*LTSC*') {'msstore-apps --id 9NBLGGH4NNS1 --ring RP'} else {'msstore-apps --id 9WZDNCRFJBMP --id 9NBLGGH4NNS1 --ring RP'}
 Start-Process -FilePath $file -ArgumentList $argumentsList -Wait -NoNewWindow -PassThru -Verbose
 
+$source = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\System Tools\File Explorer.lnk"
+$destination = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\"
+
+if (Test-Path $source) {
+    Move-Item -Path $source -Destination $destination -Force
+    Write-Host "Il file è stato spostato con successo."
+} else {
+    Write-Host "Il file non esiste nel percorso sorgente."
+}
+
 $programsPaths = @(
     "$env:APPDATA\Microsoft\Windows\Start Menu\Programs",
     "$env:PROGRAMDATA\Microsoft\Windows\Start Menu\Programs"
@@ -25,6 +35,7 @@ $foldersToHide = @(
     "Accessories",
     "Accessibility"
 )
+
 
 foreach ($programsPath in $programsPaths) {
     foreach ($folderName in $foldersToHide) {
@@ -45,14 +56,3 @@ foreach ($programsPath in $programsPaths) {
         }
     }
 }
-
-$fileExplorerShortcut = Join-Path $systemToolsPath "File Explorer.lnk"
-$newLocation = Join-Path $programsPath "File Explorer.lnk"
-
-if (Test-Path $fileExplorerShortcut) {
-    Move-Item -Path $fileExplorerShortcut -Destination $newLocation -Force
-    Write-Host "Moved File Explorer shortcut to: $newLocation"
-} else {
-    Write-Host "File Explorer shortcut not found in System Tools."
-}
-
